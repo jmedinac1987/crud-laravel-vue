@@ -13,21 +13,18 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        $tasks = Task::get();
+    public function index(Request $request)
+    {   
+        
+        $tasks = Task::orderBy('id', 'DESC')->paginate(5);               
+        $paginate = ['total' => $tasks->total(),
+                     'current_page'  => $tasks->currentPage(),
+                     'per_page'      => $tasks->perPage(),
+                     'last_page'     => $tasks->lastPage(),
+                     'from'          => $tasks->firstItem(),
+                     'to'            => $tasks->lastItem()];
 
-        return $tasks;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return compact('tasks', 'paginate');        
     }
 
     /**
@@ -37,36 +34,18 @@ class TaskController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        //
+    {   
+        //Verifica si el campo keep cumplo que no este vacio
+        $this->validate($request, 
+        [
+            'keep' => 'required'
+        ]);
+
+        Task::create($request->all());//crea la tarea en la base de datos
+
+        return;//se puede retornar un mensaje desde aquí pero el mensaje lo creamos de vue para este ejemplo
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $task = Task::findOrFail($id);
-
-        //formulario
-        
-        return $task;
-    }
-
+    
     /**
      * Update the specified resource in storage.
      *
@@ -76,7 +55,14 @@ class TaskController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+         //Verifica si el campo keep cumplo que no este vacio
+         $this->validate($request, 
+         [   
+            'keep' => 'required'
+         ]);
+ 
+         Task::find($id)->update($request->all()); 
+         return;
     }
 
     /**

@@ -16,4 +16,4 @@ Route::get('/', function () {
 });
 
 //rutas permitidas para las tareas
-Route::resource('Task', 'TaskController');
+Route::resource('Task', 'TaskController', ['except' => 'show', 'create', 'edit']);
